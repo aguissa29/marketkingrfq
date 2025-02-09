@@ -45,6 +45,59 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rfq'])) {
     );
     echo '<p>' . __('Solicitud de cotización enviada con éxito.', 'marketkingrfq') . '</p>';
 }
+$allowed_mime_types = ['image/jpeg', 'image/png', 'application/pdf'];
+$max_file_size = 5 * 1024 * 1024; // 5 MB
+
+foreach ($_FILES['rfq_attachments']['name'] as $key => $name) {
+    if ($_FILES['rfq_attachments']['error'][$key] === UPLOAD_ERR_OK) {
+        $file_type = $_FILES['rfq_attachments']['type'][$key];
+        $file_size = $_FILES['rfq_attachments']['size'][$key];
+
+        if (!in_array($file_type, $allowed_mime_types)) {
+            echo '<p>El archivo "' . esc_html($name) . '" no es un tipo válido.</p>';
+            continue;
+        }
+
+        if ($file_size > $max_file_size) {
+            echo '<p>El archivo "' . esc_html($name) . '" excede el tamaño máximo permitido.</p>';
+            continue;
+        }
+
+        // Procesar el archivo...
+    }
+}
+if (empty($title) || empty($description)) {
+    echo '<p>' . __('Todos los campos obligatorios deben completarse.', 'marketkingrfq') . '</p>';
+    return;
+}
+
+$delivery_date_timestamp = strtotime($delivery_date);
+if (!$delivery_date_timestamp || $delivery_date_timestamp < time()) {
+    echo '<p>' . __('La fecha de entrega debe ser una fecha válida en el futuro.', 'marketkingrfq') . '</p>';
+    return;
+}
+if (empty($title) || empty($description)) {
+    echo '<p>' . __('Todos los campos obligatorios deben completarse.', 'marketkingrfq') . '</p>';
+    return;
+}
+
+$delivery_date_timestamp = strtotime($delivery_date);
+if (!$delivery_date_timestamp || $delivery_date_timestamp < time()) {
+    echo '<p>' . __('La fecha de entrega debe ser una fecha válida en el futuro.', 'marketkingrfq') . '</p>';
+    return;
+}
+// En el formulario
+wp_nonce_field('rfq_form_action', 'rfq_form_nonce');
+
+// Al procesar el formulario
+if (!isset($_POST['rfq_form_nonce']) || !wp_verify_nonce($_POST['rfq_form_nonce'], 'rfq_form_action')) {
+    echo '<p>' . __('Error de seguridad: intento no autorizado.', 'marketkingrfq') . '</p>';
+    return;
+}
+add_action('init', 'cargar_textdomain_marketkingrfq');
+function cargar_textdomain_marketkingrfq() {
+    load_plugin_textdomain('marketkingrfq', false, dirname(plugin_basename(__FILE__)) . '/languages/');
+}
 ?>
 
 <div class="wrap">
@@ -83,8 +136,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rfq'])) {
         <?php endif; ?>
 
         <!-- Botón de envío -->
-        <button type="submit" name="submit_rfq" class="button button-primary">
-            <?php _e('Enviar solicitud', 'marketkingrfq'); ?>
-        </button>
+        <button type="submit" class="button button-primary">
+          <?php _e('Enviar solicitud', 'marketkingrfq'); ?>
+          </button>
     </form>
 </div>

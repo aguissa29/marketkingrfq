@@ -61,6 +61,9 @@ if (!function_exists('is_marketking_active') || !is_marketking_active()) {
     });
     return;
 }
+if (function_exists('is_marketking_pro_active') && is_marketking_pro_active()) {
+    // Lógica específica para MarketKing Pro
+}
 
 // Verificar si MarketKing Pro está activo (opcional)
 if (!function_exists('is_marketking_pro_active') || !is_marketking_pro_active()) {
