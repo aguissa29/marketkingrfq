@@ -54,3 +54,33 @@ add_action('plugins_loaded', function () {
 add_action('admin_enqueue_scripts', function () {
     wp_enqueue_style('marketking-rfq-admin', MARKETKING_RFQ_URL . 'assets/css/styles.css');
 });
+// Verificar si MarketKing Core está activo
+if (!function_exists('is_marketking_active') || !is_marketking_active()) {
+    add_action('admin_notices', function () {
+        echo '<div class="error"><p>El plugin MarketKing Core debe estar activo para que este plugin funcione.</p></div>';
+    });
+    return;
+}
+
+// Verificar si MarketKing Pro está activo (opcional)
+if (!function_exists('is_marketking_pro_active') || !is_marketking_pro_active()) {
+    add_action('admin_notices', function () {
+        echo '<div class="notice notice-warning"><p>El plugin MarketKing Pro no está activo. Algunas funcionalidades pueden estar limitadas.</p></div>';
+    });
+}
+// Agregar una nueva pestaña al dashboard del vendedor
+add_filter('marketking_vendor_dashboard_tabs', 'agregar_pestaña_rfq');
+function agregar_pestaña_rfq($tabs) {
+    $tabs['rfq'] = array(
+        'name' => __('Solicitar Cotización', 'marketkingrfq'), // Nombre visible de la pestaña
+        'url' => 'rfq',                                      // Slug de la pestaña
+        'icon' => 'dashicons-email-alt',                    // Ícono de WordPress (opcional)
+    );
+    return $tabs;
+}
+// Mostrar el contenido de la pestaña RFQ
+add_action('marketking_vendor_dashboard_content_rfq', 'mostrar_contenido_rfq');
+function mostrar_contenido_rfq() {
+    // Incluir la plantilla del formulario RFQ
+    include_once plugin_dir_path(__FILE__) . 'templates/rfq-form.php';
+}

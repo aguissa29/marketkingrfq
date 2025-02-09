@@ -1,7 +1,7 @@
 <?php
 // Verificar si el usuario está logueado
 if (!is_user_logged_in()) {
-    echo '<p>Debes iniciar sesión para crear una solicitud de cotización.</p>';
+    echo '<p>' . __('Debes iniciar sesión para crear una solicitud de cotización.', 'marketkingrfq') . '</p>';
     return;
 }
 
@@ -43,35 +43,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_rfq'])) {
             'tax' => $tax,
         ]
     );
-
-    echo '<p>Solicitud de cotización enviada con éxito.</p>';
+    echo '<p>' . __('Solicitud de cotización enviada con éxito.', 'marketkingrfq') . '</p>';
 }
 ?>
 
-<form method="post" action="" enctype="multipart/form-data">
-    <label for="rfq_title">Título del producto:</label>
-    <input type="text" id="rfq_title" name="rfq_title" required>
+<div class="wrap">
+    <h1><?php _e('Solicitar Cotización', 'marketkingrfq'); ?></h1>
+    <p><?php _e('Completa el siguiente formulario para solicitar una cotización.', 'marketkingrfq'); ?></p>
 
-    <label for="rfq_description">Descripción:</label>
-    <textarea id="rfq_description" name="rfq_description"></textarea>
+    <form method="post" action="" enctype="multipart/form-data">
+        <!-- Título del producto -->
+        <label for="rfq_title"><?php _e('Título del producto:', 'marketkingrfq'); ?></label>
+        <input type="text" id="rfq_title" name="rfq_title" required><br><br>
 
-    <label for="rfq_quantity">Cantidad requerida:</label>
-    <input type="number" id="rfq_quantity" name="rfq_quantity" required>
+        <!-- Descripción -->
+        <label for="rfq_description"><?php _e('Descripción:', 'marketkingrfq'); ?></label>
+        <textarea id="rfq_description" name="rfq_description"></textarea><br><br>
 
-    <label for="rfq_delivery_date">Plazo de entrega:</label>
-    <input type="date" id="rfq_delivery_date" name="rfq_delivery_date" required>
+        <!-- Cantidad requerida -->
+        <label for="rfq_quantity"><?php _e('Cantidad requerida:', 'marketkingrfq'); ?></label>
+        <input type="number" id="rfq_quantity" name="rfq_quantity" required><br><br>
 
-    <label for="rfq_price">Precio estimado:</label>
-    <input type="number" step="0.01" id="rfq_price" name="rfq_price" required>
+        <!-- Plazo de entrega -->
+        <label for="rfq_delivery_date"><?php _e('Plazo de entrega:', 'marketkingrfq'); ?></label>
+        <input type="date" id="rfq_delivery_date" name="rfq_delivery_date" required><br><br>
 
-    <label for="rfq_tax">Impuestos (%):</label>
-    <input type="number" step="0.01" id="rfq_tax" name="rfq_tax">
+        <!-- Precio estimado -->
+        <label for="rfq_price"><?php _e('Precio estimado:', 'marketkingrfq'); ?></label>
+        <input type="number" step="0.01" id="rfq_price" name="rfq_price" required><br><br>
 
-    <!-- Campo para múltiples archivos adjuntos -->
-    <?php if (get_option('marketking_rfq_enable_attachments', 'yes') === 'yes'): ?>
-        <label for="rfq_attachments">Adjuntar archivos:</label>
-        <input type="file" id="rfq_attachments" name="rfq_attachments[]" multiple>
-    <?php endif; ?>
+        <!-- Impuestos -->
+        <label for="rfq_tax"><?php _e('Impuestos (%):', 'marketkingrfq'); ?></label>
+        <input type="number" step="0.01" id="rfq_tax" name="rfq_tax"><br><br>
 
-    <button type="submit" name="submit_rfq">Enviar solicitud</button>
-</form>
+        <!-- Adjuntar archivos -->
+        <?php if (get_option('marketking_rfq_enable_attachments', 'yes') === 'yes'): ?>
+            <label for="rfq_attachments"><?php _e('Adjuntar archivos:', 'marketkingrfq'); ?></label>
+            <input type="file" id="rfq_attachments" name="rfq_attachments[]" multiple><br><br>
+        <?php endif; ?>
+
+        <!-- Botón de envío -->
+        <button type="submit" name="submit_rfq" class="button button-primary">
+            <?php _e('Enviar solicitud', 'marketkingrfq'); ?>
+        </button>
+    </form>
+</div>
